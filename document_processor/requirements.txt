@@ -1,0 +1,7 @@
+python-docx
+PyPDF2
+reportlab
+pyaspeller
+pyspellchecker
+textacy>=0.11
+spacy>=3.0
