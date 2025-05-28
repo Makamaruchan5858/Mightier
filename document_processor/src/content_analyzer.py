@@ -248,6 +248,52 @@ def detect_potentially_awkward_phrases(text: str, lang: str = 'ja', top_n_keyter
     
     return results
 
+# list_keywords_pdf function to be added here
+import re
+
+def list_keywords_pdf(pdf_text_content: str, keywords: list[str]) -> list[dict]:
+    """
+    Finds occurrences of specified keywords in PDF text content and lists them with counts.
+    The search is case-insensitive.
+    
+    Args:
+        pdf_text_content (str): The text content extracted from the PDF.
+        keywords (list[str]): A list of keywords to search for.
+
+    Returns:
+        list[dict]: A list of dictionaries, each containing:
+                    - "keyword": The keyword found.
+                    - "count": Number of times the keyword was found.
+    """
+    results = []
+    if not keywords or not pdf_text_content:
+        return results
+
+    # Sort keywords by length (descending) to handle overlapping phrases if necessary,
+    # though for simple counting it's less critical than for replacement.
+    # Filter out empty keywords
+    valid_keywords = [kw for kw in keywords if kw]
+    if not valid_keywords:
+        return results
+        
+    valid_keywords.sort(key=len, reverse=True)
+
+    for keyword in valid_keywords:
+        try:
+            # Case-insensitive count
+            # Ensure keyword is properly escaped for regex, especially if it contains special characters
+            matches = re.findall(re.escape(keyword), pdf_text_content, re.IGNORECASE)
+            if matches:
+                results.append({
+                    "keyword": keyword,
+                    "count": len(matches)
+                })
+        except Exception as e:
+            print(f"Error processing keyword '{keyword}': {e}")
+            # Optionally, continue to next keyword or handle error differently
+    
+    return results
+
 import re
 
 def generate_placeholder_headings(text: str, min_para_length: int = 500, heading_level: int = 3) -> list[dict]:

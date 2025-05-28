@@ -1,0 +1,7 @@
+[
+  {"type": "set_page_size", "size_identifier": "A5"},
+  {"type": "add_page_numbers"},
+  {"type": "set_text_color", "hex_color": "0000FF"},
+  {"type": "extract_keywords_for_bolding", "lang": "en", "top_n": 5},
+  {"type": "bold_keywords", "use_extracted": true}
+]

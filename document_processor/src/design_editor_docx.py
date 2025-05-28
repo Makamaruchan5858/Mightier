@@ -215,3 +215,154 @@ def add_simple_page_numbers_docx(doc_path: str, output_path: str):
         import traceback
         traceback.print_exc()
         return False
+
+import re
+
+def bold_keywords_docx(doc_path: str, output_path: str, keywords: list[str]):
+    """
+    Finds specified keywords in a DOCX document and makes them bold.
+    The search is case-insensitive. Keywords should be plain text strings.
+    Saves the modified document to output_path.
+    """
+    if not keywords:
+        print("No keywords provided for bolding.")
+        import shutil
+        try:
+            shutil.copy(doc_path, output_path)
+        except Exception as e:
+            print(f"Error copying document when no keywords provided: {e}")
+            return False # Failed to produce output
+        return True
+
+
+    try:
+        doc = Document(doc_path)
+        # Create a single regex for all keywords for efficiency, case-insensitive
+        # Sort keywords by length (descending) to match longer phrases first
+        keywords.sort(key=len, reverse=True)
+        # Filter out empty keywords if any, as they can cause issues with regex
+        valid_keywords = [kw for kw in keywords if kw]
+        if not valid_keywords:
+            print("No valid (non-empty) keywords provided.")
+            import shutil
+            shutil.copy(doc_path, output_path) # Save a copy as no operation will be performed
+            return True
+
+        keyword_regex = re.compile(r'|'.join(map(re.escape, valid_keywords)), re.IGNORECASE)
+
+        for para in doc.paragraphs:
+            if not para.runs: # Skip if paragraph has no runs
+                continue
+
+            full_text = para.text
+            if not keyword_regex.search(full_text):
+                continue 
+
+            current_runs = list(para.runs) 
+            para.clear() 
+
+            run_attributes = {} 
+            if current_runs:
+                original_first_run = current_runs[0]
+                run_attributes['name'] = original_first_run.font.name
+                run_attributes['size'] = original_first_run.font.size
+                run_attributes['italic'] = original_first_run.font.italic
+                run_attributes['underline'] = original_first_run.font.underline
+                run_attributes['color_rgb'] = original_first_run.font.color.rgb if original_first_run.font.color and hasattr(original_first_run.font.color, 'rgb') else None
+            
+            last_end = 0
+            for match in keyword_regex.finditer(full_text):
+                start, end = match.span()
+                keyword_found = match.group(0)
+
+                if start > last_end:
+                    run = para.add_run(full_text[last_end:start])
+                    if run_attributes.get('name'): run.font.name = run_attributes['name']
+                    if run_attributes.get('size'): run.font.size = run_attributes['size']
+                    if run_attributes.get('italic'): run.font.italic = run_attributes['italic']
+                    if run_attributes.get('underline'): run.font.underline = run_attributes['underline']
+                    if run_attributes.get('color_rgb'): run.font.color.rgb = run_attributes['color_rgb']
+
+                bold_run = para.add_run(keyword_found)
+                bold_run.bold = True
+                if run_attributes.get('name'): bold_run.font.name = run_attributes['name']
+                if run_attributes.get('size'): bold_run.font.size = run_attributes['size']
+                # Typically, bolding overrides italic for the bolded keyword itself, unless specifically desired
+                # if run_attributes.get('italic'): bold_run.font.italic = run_attributes['italic'] 
+                if run_attributes.get('underline'): bold_run.font.underline = run_attributes['underline'] # Preserve underline if original was underlined
+                if run_attributes.get('color_rgb'): bold_run.font.color.rgb = run_attributes['color_rgb']
+
+                last_end = end
+            
+            if last_end < len(full_text):
+                run = para.add_run(full_text[last_end:])
+                if run_attributes.get('name'): run.font.name = run_attributes['name']
+                if run_attributes.get('size'): run.font.size = run_attributes['size']
+                if run_attributes.get('italic'): run.font.italic = run_attributes['italic']
+                if run_attributes.get('underline'): run.font.underline = run_attributes['underline']
+                if run_attributes.get('color_rgb'): run.font.color.rgb = run_attributes['color_rgb']
+
+        # Repeat for tables
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for para in cell.paragraphs:
+                        if not para.runs: continue
+                        full_text = para.text
+                        if not keyword_regex.search(full_text): continue
+                        
+                        current_runs_table = list(para.runs)
+                        para.clear()
+                        run_attributes_table = {}
+                        if current_runs_table:
+                            original_first_run_table = current_runs_table[0]
+                            run_attributes_table['name'] = original_first_run_table.font.name
+                            run_attributes_table['size'] = original_first_run_table.font.size
+                            run_attributes_table['italic'] = original_first_run_table.font.italic
+                            run_attributes_table['underline'] = original_first_run_table.font.underline
+                            run_attributes_table['color_rgb'] = original_first_run_table.font.color.rgb if original_first_run_table.font.color and hasattr(original_first_run_table.font.color, 'rgb') else None
+
+                        last_end = 0
+                        for match in keyword_regex.finditer(full_text):
+                            start, end = match.span()
+                            keyword_found = match.group(0)
+                            if start > last_end:
+                                run = para.add_run(full_text[last_end:start])
+                                if run_attributes_table.get('name'): run.font.name = run_attributes_table['name']
+                                if run_attributes_table.get('size'): run.font.size = run_attributes_table['size']
+                                if run_attributes_table.get('italic'): run.font.italic = run_attributes_table['italic']
+                                if run_attributes_table.get('underline'): run.font.underline = run_attributes_table['underline']
+                                if run_attributes_table.get('color_rgb'): run.font.color.rgb = run_attributes_table['color_rgb']
+
+                            bold_run = para.add_run(keyword_found)
+                            bold_run.bold = True
+                            if run_attributes_table.get('name'): bold_run.font.name = run_attributes_table['name']
+                            if run_attributes_table.get('size'): bold_run.font.size = run_attributes_table['size']
+                            # if run_attributes_table.get('italic'): bold_run.font.italic = run_attributes_table['italic'] 
+                            if run_attributes_table.get('underline'): bold_run.font.underline = run_attributes_table['underline']
+                            if run_attributes_table.get('color_rgb'): bold_run.font.color.rgb = run_attributes_table['color_rgb']
+                            last_end = end
+
+                        if last_end < len(full_text):
+                            run = para.add_run(full_text[last_end:])
+                            if run_attributes_table.get('name'): run.font.name = run_attributes_table['name']
+                            if run_attributes_table.get('size'): run.font.size = run_attributes_table['size']
+                            if run_attributes_table.get('italic'): run.font.italic = run_attributes_table['italic']
+                            if run_attributes_table.get('underline'): run.font.underline = run_attributes_table['underline']
+                            if run_attributes_table.get('color_rgb'): run.font.color.rgb = run_attributes_table['color_rgb']
+
+        doc.save(output_path)
+        print(f"DOCX keywords bolded and saved to {output_path}")
+        return True
+    except Exception as e:
+        print(f"Error in bold_keywords_docx: {e}")
+        # import traceback
+        # traceback.print_exc()
+        import shutil
+        try:
+            # Attempt to copy original to output path to prevent data loss on this path
+            shutil.copy(doc_path, output_path) 
+            print(f"Copied original file to {output_path} due to error during processing.")
+        except Exception as copy_e:
+            print(f"Failed to copy original file to {output_path} after error: {copy_e}")
+        return False

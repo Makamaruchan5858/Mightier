@@ -5,7 +5,8 @@ from .design_editor_docx import (
     set_page_color_docx,
     set_text_color_docx,
     set_font_properties_docx,
-    add_simple_page_numbers_docx
+    add_simple_page_numbers_docx,
+    bold_keywords_docx
 )
 from .design_editor_pdf import (
     set_page_color_pdf,
@@ -13,4 +14,10 @@ from .design_editor_pdf import (
     set_font_properties_pdf,
     add_page_numbers_pdf
 )
-from .content_analyzer import correct_obvious_misspellings, detect_potentially_awkward_phrases, generate_placeholder_headings
+from .content_analyzer import (
+    correct_obvious_misspellings, 
+    detect_potentially_awkward_phrases, 
+    generate_placeholder_headings,
+    list_keywords_pdf
+)
+from .orchestrator import process_docx_document, process_pdf_document # Added
