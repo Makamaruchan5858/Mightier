@@ -343,22 +343,22 @@ def bold_keywords_docx(doc_path: str, output_path: str, keywords: list[str]):
                             if run_attributes_table.get('color_rgb'): bold_run.font.color.rgb = run_attributes_table['color_rgb']
                             last_end = end
 
-                        if last_end < len(full_text):
-                            run = para.add_run(full_text[last_end:])
-                            # Correctly indented block starts here
-                            if run_attributes_table.get('name'): 
+                        if last_end < len(full_text): # This is the 'if' statement from the error context
+                            run = para.add_run(full_text[last_end:]) # This line and subsequent attribute settings must be indented under it.
+                            # Start of explicitly 4-space indented block
+                            if run_attributes_table.get('name'):
                                 run.font.name = run_attributes_table['name']
-                            if run_attributes_table.get('size'): 
+                            if run_attributes_table.get('size'):
                                 run.font.size = run_attributes_table['size']
-                            if run_attributes_table.get('italic'): 
+                            if run_attributes_table.get('italic'):
                                 run.font.italic = run_attributes_table['italic']
-                            if run_attributes_table.get('underline'): 
+                            if run_attributes_table.get('underline'):
                                 run.font.underline = run_attributes_table['underline']
-                            if run_attributes_table.get('color_rgb'): 
+                            if run_attributes_table.get('color_rgb'):
                                 run.font.color.rgb = run_attributes_table['color_rgb']
-                            # Correctly indented block ends here
+                            # End of explicitly 4-space indented block
 
-        doc.save(output_path)
+        doc.save(output_path) # This should be outside the loops, correctly placed as per file content
         print(f"DOCX keywords bolded and saved to {output_path}")
         return True
     except Exception as e:
