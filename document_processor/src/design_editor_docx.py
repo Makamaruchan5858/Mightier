@@ -345,11 +345,18 @@ def bold_keywords_docx(doc_path: str, output_path: str, keywords: list[str]):
 
                         if last_end < len(full_text):
                             run = para.add_run(full_text[last_end:])
-                            if run_attributes_table.get('name'): run.font.name = run_attributes_table['name']
-                            if run_attributes_table.get('size'): run.font.size = run_attributes_table['size']
-                            if run_attributes_table.get('italic'): run.font.italic = run_attributes_table['italic']
-                            if run_attributes_table.get('underline'): run.font.underline = run_attributes_table['underline']
-                            if run_attributes_table.get('color_rgb'): run.font.color.rgb = run_attributes_table['color_rgb']
+                            # Correctly indented block starts here
+                            if run_attributes_table.get('name'): 
+                                run.font.name = run_attributes_table['name']
+                            if run_attributes_table.get('size'): 
+                                run.font.size = run_attributes_table['size']
+                            if run_attributes_table.get('italic'): 
+                                run.font.italic = run_attributes_table['italic']
+                            if run_attributes_table.get('underline'): 
+                                run.font.underline = run_attributes_table['underline']
+                            if run_attributes_table.get('color_rgb'): 
+                                run.font.color.rgb = run_attributes_table['color_rgb']
+                            # Correctly indented block ends here
 
         doc.save(output_path)
         print(f"DOCX keywords bolded and saved to {output_path}")
