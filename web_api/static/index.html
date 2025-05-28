@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Processor</title>
+    <link rel="stylesheet" href="/static/style.css"> <!-- Optional: for basic styling -->
+</head>
+<body>
+    <h1>Document Processor</h1>
+
+    <div>
+        <label for="fileInput">Select a .docx or .pdf file:</label>
+        <input type="file" id="fileInput" accept=".docx,.pdf">
+    </div>
+
+    <button id="uploadProcessButton">Upload and Process</button>
+
+    <h2>Status</h2>
+    <div id="statusArea" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; min-height: 50px;">
+        Select a file and click "Upload and Process".
+    </div>
+
+    <h2>Result</h2>
+    <div id="resultArea">
+        <!-- Download link will appear here -->
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

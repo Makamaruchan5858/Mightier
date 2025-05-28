@@ -1,0 +1,14 @@
+# FastAPI and Uvicorn
+fastapi>=0.70.0
+uvicorn[standard]>=0.15.0
+
+# Document Processor Core Dependencies
+python-docx
+PyPDF2
+reportlab
+pyaspeller
+pyspellchecker
+textacy>=0.11
+spacy>=3.0
+celery>=5.2.0
+redis>=4.0.0
