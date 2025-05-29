@@ -202,12 +202,12 @@ def add_simple_page_numbers_docx(doc_path: str, output_path: str):
             run._r.append(fldChar_end)
             
             # Ensure the paragraph is not empty if it was cleared
-            if not p.text and not p.runs:
+        if not p.text and not p.runs:
                  # Add a default run if paragraph is completely empty to ensure footer is visible
                  # This might not be necessary if the field itself makes the paragraph non-empty
                  # p.add_run(" ") # Placeholder if needed, but field should suffice
 
-        doc.save(output_path)
+         doc.save(output_path)
         print(f"DOCX simple page numbers added and saved to {output_path}")
         return True
     except Exception as e:
