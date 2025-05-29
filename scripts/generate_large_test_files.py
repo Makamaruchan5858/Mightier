@@ -15,8 +15,8 @@ TARGET_CHARS = 300000
 # A sample Japanese paragraph (approx 100 chars, including punctuation)
 # "吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。何でも薄暗いじめじめした所でニャーニャー泣いていた事だけは記憶している。" (Natsume Soseki)
 # This is 71 characters.
-# sample_paragraph = "これは大規模ファイル処理の検証と改善のために使用される、約30万文字の日本語テストドキュメントです。この文章は繰り返し生成され、指定された文字数に達するまで続きます。
-" # approx 100 chars
+# sample_paragraph = "これは大規模ファイル処理の検証と改善のために使用される、約30万文字の日本語テストドキュメントです。この文章は繰り返し生成され、指定された文字数に達するまで続きます。"
+# # approx 100 chars
 sample_paragraph = "吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。何でも薄暗いじめじめした所でニャーニャー泣いていた事だけは記憶している。吾輩はここで始めて人間というものを見た。\n" # approx 100 chars
 
 generated_text = ""
