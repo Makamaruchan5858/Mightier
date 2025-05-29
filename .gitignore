@@ -26,6 +26,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.gguf
+*.bin
+*.ckpt
 
 # PyInstaller
 #  Usually these files are written by a script go to dist/
