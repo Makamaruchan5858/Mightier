@@ -5,3 +5,4 @@ pyaspeller
 pyspellchecker
 textacy>=0.11
 spacy>=3.0
+llama-cpp-python

@@ -14,8 +14,8 @@ This project provides a FastAPI service for processing DOCX and PDF files.
    ```bash
    pip install -r requirements.txt
    ```
-   The list includes `python-multipart`, which FastAPI requires for handling
-   file uploads.
+   The list includes `python-multipart` for handling file uploads and
+   `llama-cpp-python` for optional document analysis features.
 4. Ensure Redis is running and start a Celery worker:
    ```bash
    celery -A web_api.celery_app worker --loglevel=info
