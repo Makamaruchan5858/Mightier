@@ -16,6 +16,10 @@ This project provides a FastAPI service for processing DOCX and PDF files.
    ```
    The list includes `python-multipart` for handling file uploads and
    `llama-cpp-python` for optional document analysis features.
+   
+   If you wish to enable the LLM based helpers, set the `LLAMA_MODEL_PATH`
+   environment variable to point at a local `gguf` model file before
+   starting the server.
 4. Ensure Redis is running and start a Celery worker:
    ```bash
    celery -A web_api.celery_app worker --loglevel=info
