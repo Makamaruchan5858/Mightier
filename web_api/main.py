@@ -1,5 +1,21 @@
-from fastapi import FastAPI
 import uvicorn # For type hinting and direct execution if needed, though uvicorn command is preferred
+import os
+import shutil
+import uuid
+from datetime import datetime
+from typing import Dict, Any, List
+
+from fastapi import FastAPI, File, UploadFile, HTTPException, Path, Body
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.background import BackgroundTask
+
+from pydantic import BaseModel, Field
+
+# Import Celery tasks
+from .tasks import process_docx_file_task, process_pdf_file_task
+from celery.result import AsyncResult # For job status
+from .celery_app import celery_app # Import the Celery app instance
 
 app = FastAPI(
     title="Document Processor API",
@@ -7,29 +23,19 @@ app = FastAPI(
     version="0.1.0"
 )
 
-@app.get("/", tags=["General"])
-async def read_root():
-    return {"message": "Welcome to the Document Processor API!"}
+# This will be replaced by serve_frontend_ui later in the file
+# @app.get("/", tags=["General"])
+# async def read_root():
+#     return {"message": "Welcome to the Document Processor API!"}
 
 @app.get("/ping", tags=["General"])
 async def ping():
     """Simple health check endpoint."""
     return {"ping": "pong"}
-
-# Imports for process endpoint
-from fastapi import Path, Body # Already imported FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse # Already imported
-from pydantic import BaseModel, Field
-import os # Already imported
 import shutil
 import uuid
 from datetime import datetime
 from typing import Dict, Any, List # Added List for ProcessRequest
-
-# Import Celery tasks
-from .tasks import process_docx_file_task, process_pdf_file_task
-from celery.result import AsyncResult # For job status
-from .celery_app import celery_app # Import the Celery app instance
 
 UPLOAD_DIRECTORY = os.path.join(os.path.dirname(__file__), "uploaded_files")
 MAX_FILE_SIZE_MB = 50  # Max file size in Megabytes
@@ -51,7 +57,7 @@ class ProcessRequest(BaseModel):
 
 
 @app.post("/upload", status_code=201, tags=["File Operations"])
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(file: UploadFile = File(...)): # File is now correctly imported
     """
     Uploads a document file (.docx or .pdf) for processing.
     Stores the file temporarily and returns a file_id.
@@ -274,11 +280,7 @@ async def get_job_status(job_id: str = Path(..., description="The ID of the proc
     # jobs_db[job_id] = job_meta # Ensure jobs_db is updated (already done by reference)
     return response_payload
 
-from fastapi.responses import FileResponse
-from starlette.background import BackgroundTask # For cleanup after response
-# import shutil # Already imported for upload endpoint, ensure it's available
-
-# Helper function for cleanup
+# Helper function for cleanup (shutil is imported at the top)
 async def cleanup_temp_dir(temp_dir_path: str):
     try:
         if temp_dir_path and os.path.exists(temp_dir_path):
@@ -350,9 +352,7 @@ if __name__ == "__main__":
     # The command `uvicorn web_api.main:app --reload` should be used from the project root directory.
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
-# Static files and HTMLResponse for UI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse # Already imported JSONResponse, FileResponse
+# Static files and HTMLResponse for UI (StaticFiles, HTMLResponse are imported at the top)
 
 # Mount static files directory
 # This should be done relative to the location of main.py
@@ -373,6 +373,4 @@ async def serve_frontend_ui():
         print(f"Error reading index.html: {e}")
         raise HTTPException(status_code=500, detail="Could not load frontend UI.")
 
-# Ensure the old root path is removed or updated if it conflicts.
-# The original @app.get("/", tags=["General"]) is now replaced by the UI serving endpoint.
-# If you need both, one must be on a different path. For this task, UI takes precedence at "/".
+# The original @app.get("/", tags=["General"]) that returned a welcome message is now replaced by serve_frontend_ui.
