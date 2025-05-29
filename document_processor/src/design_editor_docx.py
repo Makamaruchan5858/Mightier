@@ -4,6 +4,37 @@ from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
+# Optional support for llama-cpp based features.  Importing the Llama model
+# during module import previously caused startup failures when the expected
+# model file was not present.  We now attempt to load the model lazily and
+# fall back gracefully if the model path does not exist.
+import os
+
+LLAMA_MODEL_PATH = os.getenv("LLAMA_MODEL_PATH")
+_llm = None
+
+def get_llama_model():
+    """Return a loaded ``llama_cpp.Llama`` instance or ``None``."""
+    global _llm
+    if _llm is not None:
+        return _llm
+    if not LLAMA_MODEL_PATH:
+        return None
+    try:
+        from llama_cpp import Llama  # Optional dependency
+    except Exception as exc:  # pragma: no cover - optional import
+        print(f"llama-cpp-python not available: {exc}")
+        return None
+    if not os.path.exists(LLAMA_MODEL_PATH):
+        print(f"Llama model path not found: {LLAMA_MODEL_PATH}")
+        return None
+    try:
+        _llm = Llama(model_path=LLAMA_MODEL_PATH)
+    except Exception as exc:  # pragma: no cover - model load errors
+        print(f"Failed to load Llama model: {exc}")
+        _llm = None
+    return _llm
+
 def set_page_color_docx(doc_path: str, output_path: str, hex_color: str):
     """
     Sets the page background color for a DOCX document using OOXML manipulation.
