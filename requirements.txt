@@ -12,5 +12,3 @@ textacy>=0.11
 spacy>=3.0
 celery>=5.2.0
 redis>=4.0.0
-python-multipart
-llama-cpp-python

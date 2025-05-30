@@ -1,4 +1,4 @@
-from PyPDF2 import PdfReader, PdfWriter, Transformation
+from PyPDF2 import PdfReader, PdfWriter
 from PyPDF2.generic import RectangleObject # For page size
 
 # Standard page sizes in points (1 inch = 72 points)
@@ -110,13 +110,12 @@ def resize_and_margin_pdf_content(pdf_path: str, output_path: str,
             # ty = m_bottom_pt + (content_area_height - scaled_content_height) / 2
 
 
-            transformation = Transformation().scale(scale_factor).translate(tx, ty)
-            try:
-                new_page.merge_transformed_page(original_page, transformation)
-            except AttributeError:
-                # Fallback for older PyPDF2 versions
-                original_page.add_transformation(transformation)
-                new_page.merge_page(original_page)
+            new_page.merge_scaled_translated_page(
+                original_page,
+                scale=scale_factor,
+                tx=tx,
+                ty=ty
+            )
 
         with open(output_path, "wb") as f_out:
             writer.write(f_out)
